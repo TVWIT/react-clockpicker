@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { findDOMNode } from 'react-dom';
-import { Overlay, Popover, Input, Glyphicon } from 'react-bootstrap';
+import { Overlay, Popover, Glyphicon } from 'react-bootstrap';
+
 import './react-clockpicker.css';
 
 const CP_EDITING = {
@@ -48,7 +49,7 @@ export default class ClockPicker extends Component {
   render() {
     console.log(this.props);
     
-    const { onChange, placement, addonBefore, disabled } = this.props;
+    const { onChange, placement, disabled } = this.props;
     const { hours, minutes } = this.state;
 
     let hourTicks = [],
@@ -143,29 +144,31 @@ export default class ClockPicker extends Component {
       <Popover id="clockpicker" className="clockpicker-popover" title={title}>
         <div className="clockpicker-plate">
           <div className="clockpicker-canvas">
-            { hand }
+            {hand}
           </div>
           { this.state.editing === CP_EDITING.HOURS ?
           <div className="clockpicker-dial clockpicker-hours">
-            { hourTicks }
+            {hourTicks}
           </div> :
           <div className="clockpicker-dial clockpicker-minutes" style={{visibility: 'visible'}}>
-            { minuteTicks }
+            {minuteTicks}
           </div>
           }
         </div>
       </Popover>
     );
 
+    let self = this;
+
     return (
       <div>
         <div className="input-group" onClick={startEditing}>
-          <span className="input-group-addon" id="basic-addon1">
+          <span className="input-group-addon">
             <Glyphicon glyph="time"/>
           </span>
           <input
             type="text"
-            ref={this.refs.inputRef}
+            ref={this.inputRef}
             className="form-control"
             disabled={disabled}
             value={leadingZero(hours) + ':' + leadingZero(minutes)}
@@ -176,14 +179,14 @@ export default class ClockPicker extends Component {
           animation={false}
           show={this.state.editing !== CP_EDITING.NOT_EDITING}
           rootClose={true}
-          container={document.body}
-          target={() => findDOMNode(this.refs.inputRef)}
+          container={this}
+          target={() => this.inputRef.current}
           onHide={() => this.setState({
             editing: CP_EDITING.NOT_EDITING,
             hours: this.props.hours,
             minutes: this.props.minutes
-          })} >
-          {popover}
+          })}>
+            {popover}
         </Overlay>
       </div>
     );
