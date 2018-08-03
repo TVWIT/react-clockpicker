@@ -5,6 +5,8 @@ import moment from 'moment';
 
 import './react-clockpicker.css';
 
+const compose = (f, g) => data => f(g(data))
+
 const TIME_FMT = 'HH:mm';
 
 const CP_EDITING = {
@@ -41,10 +43,13 @@ export default class ClockPicker extends Component {
     disabled: false
   };
 
-  componentWillReceiveProps({ hours, minutes }) {
-    if (this.state.editing === CP_EDITING.NOT_EDITING) {
-      this.setState({ hours, minutes });
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (prevState.editing === CP_EDITING.NOT_EDITING) {
+      return {
+        time: nextProps.time
+      };
     }
+    return prevState
   }
 
   render() {
@@ -53,6 +58,8 @@ export default class ClockPicker extends Component {
 
     let hours = time.format('HH');
     let minutes = time.format('mm');
+    // console.log(hours + ':' + minutes);
+    
 
     let hourTicks = [],
       minuteTicks = [];
@@ -91,7 +98,10 @@ export default class ClockPicker extends Component {
         <div
           key={'hour_' + text}
           className="clockpicker-tick"
-          onClick={() => this.setState({ editing: CP_EDITING.MINUTES, hours: i })}
+          onClick={() => this.setState({ 
+            editing: CP_EDITING.MINUTES,
+            time: moment(i + ':' + leadingZero(minutes), TIME_FMT)
+          })}
           style={{left, top, fontSize: inner ? '120%' : '100%'}}>
           {text}
         </div>
@@ -110,7 +120,9 @@ export default class ClockPicker extends Component {
           className="clockpicker-tick"
           onClick={() => {
             this.setState({ editing: CP_EDITING.NOT_EDITING, minutes: i })
-            onChange(hours, i)
+            onChange(
+              moment(hours + ':' + leadingZero(i), TIME_FMT)
+            )
           }}
           style={{left, top, fontSize: '120%'}}>
           {text}
@@ -171,7 +183,7 @@ export default class ClockPicker extends Component {
             ref={this.inputRef}
             className="form-control"
             disabled={disabled}
-            value={leadingZero(hours) + ':' + leadingZero(minutes)}
+            value={time.format(TIME_FMT)}
             onChange={() => false}/>
         </div>
         <Overlay

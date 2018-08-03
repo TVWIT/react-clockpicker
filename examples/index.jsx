@@ -3,26 +3,24 @@ import { render } from 'react-dom';
 import ClockPicker from '../src/react-clockpicker';
 import moment from 'moment';
 
+// Example Statefull Component
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      time: moment().startOf('minute'),
-      enabled: true
+      time: moment().startOf('minute')
     };
   }
 
   render() {
-    let { time, enabled } = this.state;
-    let checkbox = <input type="checkbox" checked={this.state.enabled} onChange={(e) => this.setState({ enabled: e.target.checked })} />;
-
+    let { time } = this.state;
     return (
       <ClockPicker
-        addonBefore={checkbox}
         placement='bottom'
-        disabled={!enabled}
         time={time}
-        onChange={(hours, minutes) => this.setState({ hours, minutes })} />
+        onChange={time => {
+          this.setState({ time: time })
+        }}/>
     );
   }
 }
