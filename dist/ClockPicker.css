@@ -151,7 +151,6 @@
     stroke: rgb(0, 149, 221);
     stroke-width: 1;
     stroke-linecap: round;
-    /*shape-rendering: crispEdges;*/
 }
 .clockpicker-button.am-button {
     margin: 1px;

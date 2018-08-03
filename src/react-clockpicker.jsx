@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { findDOMNode } from 'react-dom';
 import { Overlay, Popover, Glyphicon } from 'react-bootstrap';
+import moment from 'moment';
 
 import './react-clockpicker.css';
+
+const TIME_FMT = 'HH:mm';
 
 const CP_EDITING = {
   NOT_EDITING: 0,
@@ -18,8 +20,7 @@ export default class ClockPicker extends Component {
     this.inputRef = React.createRef();
     
     this.state = {
-      hours: props.hours,
-      minutes: props.minutes,
+      time: props.time,
       editing: CP_EDITING.NOT_EDITING
     };
   }
@@ -47,10 +48,11 @@ export default class ClockPicker extends Component {
   }
 
   render() {
-    console.log(this.props);
-    
     const { onChange, placement, disabled } = this.props;
-    const { hours, minutes } = this.state;
+    const { time } = this.state;
+
+    let hours = time.format('HH');
+    let minutes = time.format('mm');
 
     let hourTicks = [],
       minuteTicks = [];
@@ -157,8 +159,6 @@ export default class ClockPicker extends Component {
         </div>
       </Popover>
     );
-
-    let self = this;
 
     return (
       <div>

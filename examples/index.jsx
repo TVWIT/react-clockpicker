@@ -1,20 +1,19 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 import ClockPicker from '../src/react-clockpicker';
-require('../src/react-clockpicker.css');
+import moment from 'moment';
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      hours: 12,
-      minutes: 20,
+      time: moment().startOf('minute'),
       enabled: true
     };
   }
 
   render() {
-    let { hours, minutes, enabled } = this.state;
+    let { time, enabled } = this.state;
     let checkbox = <input type="checkbox" checked={this.state.enabled} onChange={(e) => this.setState({ enabled: e.target.checked })} />;
 
     return (
@@ -22,8 +21,7 @@ class App extends Component {
         addonBefore={checkbox}
         placement='bottom'
         disabled={!enabled}
-        hours={hours}
-        minutes={minutes}
+        time={time}
         onChange={(hours, minutes) => this.setState({ hours, minutes })} />
     );
   }
