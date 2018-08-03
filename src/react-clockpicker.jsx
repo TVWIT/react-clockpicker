@@ -2,8 +2,12 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Overlay, Popover, Glyphicon } from 'react-bootstrap';
 import moment from 'moment';
+import { DragDropContextProvider } from 'react-dnd'
+import HTML5Backend from 'react-dnd-html5-backend'
 
 import './react-clockpicker.css';
+
+import MinuteTick from './minute-tick';
 
 const compose = (f, g) => data => f(g(data))
 
@@ -28,12 +32,10 @@ export default class ClockPicker extends Component {
   }
 
   static propTypes = {
-    hours: PropTypes.number.isRequired,
-    minutes: PropTypes.number.isRequired,
+    time: PropTypes.object.isRequired,
     onChange: PropTypes.func.isRequired,
-    placement: PropTypes.oneOf(['top', 'right', 'bottom', 'left']).isRequired,
-    addonBefore: PropTypes.node,
-    disabled: PropTypes.bool.isRequired
+    placement: PropTypes.oneOf(['top', 'right', 'bottom', 'left']),
+    disabled: PropTypes.bool
   };
 
   static defaultProps = {
@@ -58,8 +60,6 @@ export default class ClockPicker extends Component {
 
     let hours = time.format('HH');
     let minutes = time.format('mm');
-    // console.log(hours + ':' + minutes);
-    
 
     let hourTicks = [],
       minuteTicks = [];
@@ -115,19 +115,30 @@ export default class ClockPicker extends Component {
       const text = leadingZero(i);
 
       minuteTicks.push(
-        <div
+        <MinuteTick
           key={'minute_' + text}
-          className="clockpicker-tick"
-          onClick={() => {
+          text={text}
+          style={{left, top, fontSize: '120%'}}
+          onChange={() => {
             this.setState({ editing: CP_EDITING.NOT_EDITING, minutes: i })
             onChange(
               moment(hours + ':' + leadingZero(i), TIME_FMT)
             )
-          }}
-          style={{left, top, fontSize: '120%'}}>
-          {text}
-        </div>
+          }}/>
       );
+      //   <div
+      //     key={'minute_' + text}
+      //     className="clockpicker-tick"
+      //     onClick={() => {
+      //       this.setState({ editing: CP_EDITING.NOT_EDITING, minutes: i })
+      //       onChange(
+      //         moment(hours + ':' + leadingZero(i), TIME_FMT)
+      //       )
+      //     }}
+      //     style={{left, top, fontSize: '120%'}}>
+      //     {text}
+      //   </div>
+      // );
     }
 
     const value = this.state.editing === CP_EDITING.HOURS ? hours : minutes,
@@ -160,47 +171,49 @@ export default class ClockPicker extends Component {
           <div className="clockpicker-canvas">
             {hand}
           </div>
-          { this.state.editing === CP_EDITING.HOURS ?
-          <div className="clockpicker-dial clockpicker-hours">
-            {hourTicks}
-          </div> :
-          <div className="clockpicker-dial clockpicker-minutes" style={{visibility: 'visible'}}>
-            {minuteTicks}
-          </div>
+          {(this.state.editing === CP_EDITING.HOURS) ?
+            <div className="clockpicker-dial clockpicker-hours">
+              {hourTicks}
+            </div> :
+            <div className="clockpicker-dial clockpicker-minutes" style={{visibility: 'visible'}}>
+              {minuteTicks}
+            </div>
           }
         </div>
       </Popover>
     );
 
     return (
-      <div>
-        <div className="input-group" onClick={startEditing}>
-          <span className="input-group-addon">
-            <Glyphicon glyph="time"/>
-          </span>
-          <input
-            type="text"
-            ref={this.inputRef}
-            className="form-control"
-            disabled={disabled}
-            value={time.format(TIME_FMT)}
-            onChange={() => false}/>
+      <DragDropContextProvider backend={HTML5Backend}>
+        <div>
+          <div className="input-group" onClick={startEditing}>
+            <span className="input-group-addon">
+              <Glyphicon glyph="time"/>
+            </span>
+            <input
+              type="text"
+              ref={this.inputRef}
+              className="form-control"
+              disabled={disabled || false}
+              value={time.format(TIME_FMT)}
+              onChange={() => false}/>
+          </div>
+          <Overlay
+            placement={placement || 'bottom'} 
+            animation={false}
+            show={this.state.editing !== CP_EDITING.NOT_EDITING}
+            rootClose={true}
+            container={this}
+            target={() => this.inputRef.current}
+            onHide={() => this.setState({
+              editing: CP_EDITING.NOT_EDITING,
+              hours: this.props.hours,
+              minutes: this.props.minutes
+            })}>
+              {popover}
+          </Overlay>
         </div>
-        <Overlay
-          placement={placement}
-          animation={false}
-          show={this.state.editing !== CP_EDITING.NOT_EDITING}
-          rootClose={true}
-          container={this}
-          target={() => this.inputRef.current}
-          onHide={() => this.setState({
-            editing: CP_EDITING.NOT_EDITING,
-            hours: this.props.hours,
-            minutes: this.props.minutes
-          })}>
-            {popover}
-        </Overlay>
-      </div>
+      </DragDropContextProvider>
     );
   }
 }

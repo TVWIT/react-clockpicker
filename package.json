@@ -1,16 +1,16 @@
 {
   "name": "react-clockpicker",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "React port of Clockpicker widget",
   "author": "Fatih Altinok <fatihaltinok@live.com> (http://github.com/frontsideair)",
   "license": "MIT",
-  "homepage": "https://github.com/frontsideair/react-clockpicker",
+  "homepage": "https://github.com/tvwit/react-clockpicker",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/frontsideair/react-clockpicker.git"
+    "url": "git+https://github.com/tvwit/react-clockpicker.git"
   },
   "bugs": {
-    "url": "https://github.com/frontsideair/react-clockpicker/issues"
+    "url": "https://github.com/tvwit/react-clockpicker/issues"
   },
   "contributors": [
     {
@@ -27,17 +27,20 @@
     "build": "NODE_ENV=production webpack --config webpack.config.prod.js",
     "lint": "eslint src"
   },
-  "main": "dist/react-clockpicker.js",
-  "style": "dist/react-clockpicker.css",
+  "main": "dist/ClockPicker.js",
+  "style": "dist/ClockPicker.css",
   "files": [
     "src",
     "dist"
   ],
   "dependencies": {
+    "lodash": "^4.17.10",
     "moment": "^2.22.2",
     "prop-types": "^15.6.2",
     "react": "^16.4.2",
     "react-bootstrap": "^0.32.1",
+    "react-dnd": "^5.0.0",
+    "react-dnd-html5-backend": "^5.0.1",
     "react-dom": "^16.4.2"
   },
   "devDependencies": {
